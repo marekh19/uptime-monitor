@@ -10,12 +10,12 @@ type Monitor struct {
 	UserId    string `json:"user_id"`
 	Name      string `json:"name"`
 	Address   string `json:"address"`
-	Interval  int    `json:"interval"`
 	Method    string `json:"method"`
 	Kind      string `json:"kind"`
 	Config    string `json:"config"`
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
+	Interval  int    `json:"interval"`
 }
 
 type MonitorStore struct {
@@ -24,14 +24,15 @@ type MonitorStore struct {
 
 func (s *MonitorStore) Create(ctx context.Context, monitor *Monitor) error {
 	query := `
-    INSERT INTO monitors (user_id, name, address, interval, method, kind, config)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
-    RETURNING id, created_at, updated_at
+    INSERT INTO monitors (id, user_id, name, address, interval, method, kind, config)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    RETURNING id, created_at, updated_at;
   `
 
 	err := s.db.QueryRowContext(
 		ctx,
 		query,
+		monitor.ID,
 		monitor.UserId,
 		monitor.Name,
 		monitor.Address,
@@ -40,7 +41,6 @@ func (s *MonitorStore) Create(ctx context.Context, monitor *Monitor) error {
 		monitor.Kind,
 		monitor.Config,
 	).Scan(&monitor.ID, &monitor.CreatedAt, &monitor.UpdatedAt)
-
 	if err != nil {
 		return err
 	}

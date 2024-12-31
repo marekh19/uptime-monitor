@@ -9,5 +9,6 @@ require (
 	github.com/go-chi/chi/v5 v5.2.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/libsql/sqlite-antlr4-parser v0.0.0-20240327125255-dbf53b6cbf06 // indirect
+	github.com/matoous/go-nanoid/v2 v2.1.0 // indirect
 	golang.org/x/exp v0.0.0-20230515195305-f3d0a9c9a5cc // indirect
 )

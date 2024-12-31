@@ -11,20 +11,21 @@ import (
 )
 
 type application struct {
-	config config
 	store  store.Storage
+	config config
 }
 
 type config struct {
 	addr string
+	env  string
 	db   dbConfig
 }
 
 type dbConfig struct {
 	addr         string
+	maxIdleTime  string
 	maxOpenConns int
 	maxIdleConns int
-	maxIdleTime  string
 }
 
 func (app *application) mount() http.Handler {
@@ -42,6 +43,14 @@ func (app *application) mount() http.Handler {
 
 	r.Route("/v1", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
+
+		r.Route("/monitors", func(r chi.Router) {
+			r.Post("/", app.createMonitorHandler)
+			// r.Get("/", app.listMonitorsHandler)
+			// r.Get("/{id}", app.getMonitorHandler)
+			// r.Put("/{id}", app.updateMonitorHandler)
+			// r.Delete("/{id}", app.deleteMonitorHandler)
+		})
 	})
 
 	return r
