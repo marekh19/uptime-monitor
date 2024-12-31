@@ -10,9 +10,9 @@ type StatusPage struct {
 	UserID     string   `json:"user_id"`
 	Name       string   `json:"name"`
 	Slug       string   `json:"slug"`
-	MonitorIDs []string `json:"monitors"`
 	CreatedAt  string   `json:"created_at"`
 	UpdatedAt  string   `json:"updated_at"`
+	MonitorIDs []string `json:"monitors"`
 }
 
 type StatusPagesStore struct {
@@ -33,7 +33,6 @@ func (s *StatusPagesStore) Create(ctx context.Context, statusPage *StatusPage) e
 		statusPage.Name,
 		statusPage.Slug,
 		statusPage.MonitorIDs).Scan(&statusPage.ID, &statusPage.CreatedAt, &statusPage.UpdatedAt)
-
 	if err != nil {
 		return err
 	}

@@ -27,3 +27,6 @@ go.work.sum
 
 # Misc
 .DS_Store
+
+# Local database
+local.db

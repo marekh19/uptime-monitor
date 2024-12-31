@@ -9,8 +9,8 @@ type PingResult struct {
 	ID           string `json:"id"`
 	MonitorID    string `json:"monitor_id"`
 	Status       string `jhson:"status"`
-	ResponseTime int    `json:"response_time"`
 	Timestamp    string `json:"timestamp"`
+	ResponseTime int    `json:"response_time"`
 }
 
 type PingResultStore struct {
@@ -32,7 +32,6 @@ func (s *PingResultStore) Create(ctx context.Context, pingResult *PingResult) er
 		pingResult.ResponseTime,
 		pingResult.Timestamp,
 	).Scan(&pingResult.ID, &pingResult.Timestamp)
-
 	if err != nil {
 		return err
 	}
