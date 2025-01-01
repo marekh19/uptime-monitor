@@ -12,6 +12,7 @@ type Storage struct {
 	Monitors interface {
 		Create(context.Context, *Monitor) error
 		GetByID(context.Context, string) (*Monitor, error)
+		List(context.Context) ([]*Monitor, error)
 	}
 	Users interface {
 		Create(context.Context, *User) error

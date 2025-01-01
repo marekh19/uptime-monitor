@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 )
 
 type Monitor struct {
@@ -80,4 +81,44 @@ func (s *MonitorStore) GetByID(ctx context.Context, id string) (*Monitor, error)
 	}
 
 	return &monitor, nil
+}
+
+func (s *MonitorStore) List(ctx context.Context) ([]*Monitor, error) {
+	query := `
+    SELECT id, user_id, name, address, method, kind, config, created_at, updated_at, interval
+    FROM monitors;
+  `
+
+	rows, err := s.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch monitors: %w", err)
+	}
+	defer rows.Close()
+
+	var monitors []*Monitor
+	for rows.Next() {
+		var monitor Monitor
+		err := rows.Scan(
+			&monitor.ID,
+			&monitor.UserId,
+			&monitor.Name,
+			&monitor.Address,
+			&monitor.Method,
+			&monitor.Kind,
+			&monitor.Config,
+			&monitor.CreatedAt,
+			&monitor.UpdatedAt,
+			&monitor.Interval,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan monitor: %w", err)
+		}
+		monitors = append(monitors, &monitor)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating through rows: %w", err)
+	}
+
+	return monitors, nil
 }

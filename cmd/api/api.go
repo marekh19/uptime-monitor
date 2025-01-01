@@ -46,7 +46,7 @@ func (app *application) mount() http.Handler {
 
 		r.Route("/monitors", func(r chi.Router) {
 			r.Post("/", app.createMonitorHandler)
-			// r.Get("/", app.listMonitorsHandler)
+			r.Get("/", app.listMonitorsHandler)
 			r.Route("/{id}", func(r chi.Router) {
 				r.Get("/", app.getMonitorHandler)
 				// r.Put("/", app.updateMonitorHandler)

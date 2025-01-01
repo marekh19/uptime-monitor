@@ -83,3 +83,16 @@ func (app *application) getMonitorHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 }
+
+func (app *application) listMonitorsHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	monitors, err := app.store.Monitors.List(ctx)
+	if err != nil {
+		writeJSONError(w, http.StatusInternalServerError, err.Error())
+	}
+
+	if err := writeJSON(w, http.StatusOK, monitors); err != nil {
+		writeJSONError(w, http.StatusInternalServerError, err.Error())
+	}
+}
