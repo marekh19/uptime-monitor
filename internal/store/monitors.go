@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"database/sql"
+	"errors"
 )
 
 type Monitor struct {
@@ -46,4 +47,37 @@ func (s *MonitorStore) Create(ctx context.Context, monitor *Monitor) error {
 	}
 
 	return nil
+}
+
+func (s *MonitorStore) GetByID(ctx context.Context, id string) (*Monitor, error) {
+	query := `
+    SELECT id, user_id, name, address, method, kind, config, created_at, updated_at, interval
+    FROM monitors
+    WHERE id = $1;
+  `
+
+	var monitor Monitor
+
+	err := s.db.QueryRowContext(ctx, query, id).Scan(
+		&monitor.ID,
+		&monitor.UserId,
+		&monitor.Name,
+		&monitor.Address,
+		&monitor.Method,
+		&monitor.Kind,
+		&monitor.Config,
+		&monitor.CreatedAt,
+		&monitor.UpdatedAt,
+		&monitor.Interval,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &monitor, nil
 }

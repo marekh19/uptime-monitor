@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/marekh19/uptime-monitor/internal/store"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
@@ -51,6 +53,32 @@ func (app *application) createMonitorHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	if err := writeJSON(w, http.StatusCreated, monitor); err != nil {
+		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+}
+
+func (app *application) getMonitorHandler(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if id == "" {
+		writeJSONError(w, http.StatusBadRequest, "Missing id parameter")
+		return
+	}
+
+	ctx := r.Context()
+
+	monitor, err := app.store.Monitors.GetByID(ctx, id)
+	if err != nil {
+		switch {
+		case errors.Is(err, store.ErrNotFound):
+			writeJSONError(w, http.StatusNotFound, err.Error())
+		default:
+			writeJSONError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	if err := writeJSON(w, http.StatusOK, monitor); err != nil {
 		writeJSONError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
