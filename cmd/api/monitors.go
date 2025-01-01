@@ -21,13 +21,13 @@ type CreateMonitorPayload struct {
 func (app *application) createMonitorHandler(w http.ResponseWriter, r *http.Request) {
 	var payload CreateMonitorPayload
 	if err := readJSON(w, r, &payload); err != nil {
-		writeJSONError(w, http.StatusBadRequest, err.Error())
+		app.badRequestError(w, r, err)
 		return
 	}
 
 	id, err := gonanoid.New()
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		app.internalServerError(w, r, err)
 		return
 	}
 
@@ -48,12 +48,12 @@ func (app *application) createMonitorHandler(w http.ResponseWriter, r *http.Requ
 	ctx := r.Context()
 
 	if err := app.store.Monitors.Create(ctx, monitor); err != nil {
-		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		app.internalServerError(w, r, err)
 		return
 	}
 
 	if err := writeJSON(w, http.StatusCreated, monitor); err != nil {
-		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		app.internalServerError(w, r, err)
 		return
 	}
 }
@@ -61,7 +61,7 @@ func (app *application) createMonitorHandler(w http.ResponseWriter, r *http.Requ
 func (app *application) getMonitorHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if id == "" {
-		writeJSONError(w, http.StatusBadRequest, "Missing id parameter")
+		app.badRequestError(w, r, errors.New("missing id parameter"))
 		return
 	}
 
@@ -71,15 +71,15 @@ func (app *application) getMonitorHandler(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		switch {
 		case errors.Is(err, store.ErrNotFound):
-			writeJSONError(w, http.StatusNotFound, err.Error())
+			app.notFoundError(w, r, err)
 		default:
-			writeJSONError(w, http.StatusInternalServerError, err.Error())
+			app.internalServerError(w, r, err)
 		}
 		return
 	}
 
 	if err := writeJSON(w, http.StatusOK, monitor); err != nil {
-		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		app.internalServerError(w, r, err)
 		return
 	}
 }
@@ -89,10 +89,10 @@ func (app *application) listMonitorsHandler(w http.ResponseWriter, r *http.Reque
 
 	monitors, err := app.store.Monitors.List(ctx)
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		app.internalServerError(w, r, err)
 	}
 
 	if err := writeJSON(w, http.StatusOK, monitors); err != nil {
-		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		app.internalServerError(w, r, err)
 	}
 }
