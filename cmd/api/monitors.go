@@ -10,17 +10,22 @@ import (
 )
 
 type CreateMonitorPayload struct {
-	Name     string `json:"name"`
-	Address  string `json:"address"`
-	Method   string `json:"method"`
+	Name     string `json:"name" validate:"required,max=100"`
+	Address  string `json:"address" validate:"required,url"`
+	Method   string `json:"method" validate:"omitempty,oneof=GET POST PUT PATCH DELETE HEAD OPTIONS"`
 	Kind     string `json:"kind"`
 	Config   string `json:"config"`
-	Interval int    `json:"interval"`
+	Interval int    `json:"interval" validate:"required,gt=0"`
 }
 
 func (app *application) createMonitorHandler(w http.ResponseWriter, r *http.Request) {
 	var payload CreateMonitorPayload
 	if err := readJSON(w, r, &payload); err != nil {
+		app.badRequestError(w, r, err)
+		return
+	}
+
+	if err := Validate.Struct(payload); err != nil {
 		app.badRequestError(w, r, err)
 		return
 	}
