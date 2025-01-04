@@ -41,16 +41,18 @@ func (app *application) mount() http.Handler {
 	// processing should be stopped.
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	r.Route("/v1", func(r chi.Router) {
-		r.Get("/health", app.healthCheckHandler)
+	r.Route("/api", func(r chi.Router) {
+		r.Route("/v1", func(r chi.Router) {
+			r.Get("/health", app.healthCheckHandler)
 
-		r.Route("/monitors", func(r chi.Router) {
-			r.Post("/", app.createMonitorHandler)
-			r.Get("/", app.listMonitorsHandler)
-			r.Route("/{id}", func(r chi.Router) {
-				r.Get("/", app.getMonitorHandler)
-				// r.Put("/", app.updateMonitorHandler)
-				// r.Delete("/", app.deleteMonitorHandler)
+			r.Route("/monitors", func(r chi.Router) {
+				r.Post("/", app.createMonitorHandler)
+				r.Get("/", app.listMonitorsHandler)
+				r.Route("/{id}", func(r chi.Router) {
+					r.Get("/", app.getMonitorHandler)
+					// r.Put("/", app.updateMonitorHandler)
+					// r.Delete("/", app.deleteMonitorHandler)
+				})
 			})
 		})
 	})
