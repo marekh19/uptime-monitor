@@ -101,3 +101,25 @@ func (app *application) listMonitorsHandler(w http.ResponseWriter, r *http.Reque
 		app.internalServerError(w, r, err)
 	}
 }
+
+func (app *application) deleteMonitorHandler(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if id == "" {
+		app.badRequestError(w, r, errors.New("missing id parameter"))
+		return
+	}
+
+	ctx := r.Context()
+
+	if err := app.store.Monitors.Delete(ctx, id); err != nil {
+		switch {
+		case errors.Is(err, store.ErrNotFound):
+			app.notFoundError(w, r, err)
+		default:
+			app.internalServerError(w, r, err)
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}

@@ -50,8 +50,8 @@ func (app *application) mount() http.Handler {
 				r.Get("/", app.listMonitorsHandler)
 				r.Route("/{id}", func(r chi.Router) {
 					r.Get("/", app.getMonitorHandler)
-					// r.Put("/", app.updateMonitorHandler)
-					// r.Delete("/", app.deleteMonitorHandler)
+					r.Delete("/", app.deleteMonitorHandler)
+					// r.Patch("/", app.updateMonitorHandler)
 				})
 			})
 		})

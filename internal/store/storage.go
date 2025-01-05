@@ -13,6 +13,7 @@ type Storage struct {
 		Create(context.Context, *Monitor) error
 		GetByID(context.Context, string) (*Monitor, error)
 		List(context.Context) ([]*Monitor, error)
+		Delete(context.Context, string) error
 	}
 	Users interface {
 		Create(context.Context, *User) error

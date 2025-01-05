@@ -122,3 +122,26 @@ func (s *MonitorStore) List(ctx context.Context) ([]*Monitor, error) {
 
 	return monitors, nil
 }
+
+func (s *MonitorStore) Delete(ctx context.Context, id string) error {
+	query := `
+    DELETE FROM monitors
+    WHERE id = $1;
+  `
+
+	res, err := s.db.ExecContext(ctx, query, id)
+	if err != nil {
+		return err
+	}
+
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rows == 0 {
+		return ErrNotFound
+	}
+
+	return nil
+}
