@@ -18,6 +18,7 @@ type Monitor struct {
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 	Interval  int    `json:"interval"`
+	Version   int    `json:"version"`
 }
 
 type MonitorStore struct {
@@ -52,7 +53,7 @@ func (s *MonitorStore) Create(ctx context.Context, monitor *Monitor) error {
 
 func (s *MonitorStore) GetByID(ctx context.Context, id string) (*Monitor, error) {
 	query := `
-    SELECT id, user_id, name, address, method, kind, config, created_at, updated_at, interval
+    SELECT id, user_id, name, address, method, kind, config, created_at, updated_at, interval, version
     FROM monitors
     WHERE id = $1;
   `
@@ -70,6 +71,7 @@ func (s *MonitorStore) GetByID(ctx context.Context, id string) (*Monitor, error)
 		&monitor.CreatedAt,
 		&monitor.UpdatedAt,
 		&monitor.Interval,
+		&monitor.Version,
 	)
 	if err != nil {
 		switch {
@@ -85,7 +87,7 @@ func (s *MonitorStore) GetByID(ctx context.Context, id string) (*Monitor, error)
 
 func (s *MonitorStore) List(ctx context.Context) ([]*Monitor, error) {
 	query := `
-    SELECT id, user_id, name, address, method, kind, config, created_at, updated_at, interval
+    SELECT id, user_id, name, address, method, kind, config, created_at, updated_at, interval, version
     FROM monitors;
   `
 
@@ -109,6 +111,7 @@ func (s *MonitorStore) List(ctx context.Context) ([]*Monitor, error) {
 			&monitor.CreatedAt,
 			&monitor.UpdatedAt,
 			&monitor.Interval,
+			&monitor.Version,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan monitor: %w", err)
@@ -155,13 +158,31 @@ func (s *MonitorStore) Update(ctx context.Context, monitor *Monitor) error {
       interval = COALESCE($3, interval),
       method = COALESCE($4, method),
       kind = COALESCE($5, kind),
-      config = COALESCE($6, config)
-    WHERE id = $7;
+      config = COALESCE($6, config),
+      version = version + 1
+    WHERE id = $7 AND version = $8
+    RETURNING version;
   `
 
-	_, err := s.db.ExecContext(ctx, query, monitor.Name, monitor.Address, monitor.Interval, monitor.Method, monitor.Kind, monitor.Config, monitor.ID)
+	err := s.db.QueryRowContext(
+		ctx,
+		query,
+		monitor.Name,
+		monitor.Address,
+		monitor.Interval,
+		monitor.Method,
+		monitor.Kind,
+		monitor.Config,
+		monitor.ID,
+		monitor.Version,
+	).Scan(&monitor.Version)
 	if err != nil {
-		return err
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return ErrNotFound
+		default:
+			return err
+		}
 	}
 
 	return nil
