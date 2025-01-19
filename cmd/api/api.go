@@ -49,9 +49,11 @@ func (app *application) mount() http.Handler {
 				r.Post("/", app.createMonitorHandler)
 				r.Get("/", app.listMonitorsHandler)
 				r.Route("/{id}", func(r chi.Router) {
+					r.Use(app.monitorContextMiddleware)
+
 					r.Get("/", app.getMonitorHandler)
 					r.Delete("/", app.deleteMonitorHandler)
-					// r.Patch("/", app.updateMonitorHandler)
+					r.Patch("/", app.updateMonitorHandler)
 				})
 			})
 		})

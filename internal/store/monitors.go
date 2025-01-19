@@ -145,3 +145,24 @@ func (s *MonitorStore) Delete(ctx context.Context, id string) error {
 
 	return nil
 }
+
+func (s *MonitorStore) Update(ctx context.Context, monitor *Monitor) error {
+	query := `
+    UPDATE monitors
+    SET
+      name = COALESCE($1, name),
+      address = COALESCE($2, address),
+      interval = COALESCE($3, interval),
+      method = COALESCE($4, method),
+      kind = COALESCE($5, kind),
+      config = COALESCE($6, config)
+    WHERE id = $7;
+  `
+
+	_, err := s.db.ExecContext(ctx, query, monitor.Name, monitor.Address, monitor.Interval, monitor.Method, monitor.Kind, monitor.Config, monitor.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
