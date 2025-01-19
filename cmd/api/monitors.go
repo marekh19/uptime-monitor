@@ -160,7 +160,12 @@ func (app *application) updateMonitorHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	if err := app.store.Monitors.Update(r.Context(), monitor); err != nil {
-		app.internalServerError(w, r, err)
+		switch {
+		case errors.Is(err, store.ErrNotFound):
+			app.conflictError(w, r, err)
+		default:
+			app.internalServerError(w, r, err)
+		}
 		return
 	}
 
