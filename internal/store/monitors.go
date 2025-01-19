@@ -32,6 +32,9 @@ func (s *MonitorStore) Create(ctx context.Context, monitor *Monitor) error {
     RETURNING id, created_at, updated_at;
   `
 
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
 	err := s.db.QueryRowContext(
 		ctx,
 		query,
@@ -57,6 +60,9 @@ func (s *MonitorStore) GetByID(ctx context.Context, id string) (*Monitor, error)
     FROM monitors
     WHERE id = $1;
   `
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
 
 	var monitor Monitor
 
@@ -90,6 +96,9 @@ func (s *MonitorStore) List(ctx context.Context) ([]*Monitor, error) {
     SELECT id, user_id, name, address, method, kind, config, created_at, updated_at, interval, version
     FROM monitors;
   `
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
 
 	rows, err := s.db.QueryContext(ctx, query)
 	if err != nil {
@@ -132,6 +141,9 @@ func (s *MonitorStore) Delete(ctx context.Context, id string) error {
     WHERE id = $1;
   `
 
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
 	res, err := s.db.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
@@ -163,6 +175,9 @@ func (s *MonitorStore) Update(ctx context.Context, monitor *Monitor) error {
     WHERE id = $7 AND version = $8
     RETURNING version;
   `
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
 
 	err := s.db.QueryRowContext(
 		ctx,

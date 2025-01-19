@@ -24,6 +24,9 @@ func (s *PingResultStore) Create(ctx context.Context, pingResult *PingResult) er
     RETURNING id, timestamp
   `
 
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
 	err := s.db.QueryRowContext(
 		ctx,
 		query,

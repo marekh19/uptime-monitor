@@ -26,6 +26,9 @@ func (s *StatusPagesStore) Create(ctx context.Context, statusPage *StatusPage) e
     RETURNING id, created_at, updated_at
   `
 
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
+	defer cancel()
+
 	err := s.db.QueryRowContext(
 		ctx,
 		query,
