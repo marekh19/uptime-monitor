@@ -62,7 +62,7 @@ func (app *application) createMonitorHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if err := writeJSON(w, http.StatusCreated, monitor); err != nil {
+	if err := app.jsonResponse(w, http.StatusCreated, monitor); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
@@ -71,7 +71,7 @@ func (app *application) createMonitorHandler(w http.ResponseWriter, r *http.Requ
 func (app *application) getMonitorHandler(w http.ResponseWriter, r *http.Request) {
 	monitor := getMonitorFromContext(r)
 
-	if err := writeJSON(w, http.StatusOK, monitor); err != nil {
+	if err := app.jsonResponse(w, http.StatusOK, monitor); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
@@ -85,7 +85,7 @@ func (app *application) listMonitorsHandler(w http.ResponseWriter, r *http.Reque
 		app.internalServerError(w, r, err)
 	}
 
-	if err := writeJSON(w, http.StatusOK, monitors); err != nil {
+	if err := app.jsonResponse(w, http.StatusOK, monitors); err != nil {
 		app.internalServerError(w, r, err)
 	}
 }
@@ -164,7 +164,7 @@ func (app *application) updateMonitorHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if err := writeJSON(w, http.StatusNoContent, monitor); err != nil {
+	if err := app.jsonResponse(w, http.StatusNoContent, monitor); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
