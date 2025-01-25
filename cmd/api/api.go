@@ -1,13 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+
+	"github.com/marekh19/uptime-monitor/docs"
 	"github.com/marekh19/uptime-monitor/internal/store"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 type application struct {
@@ -16,9 +20,10 @@ type application struct {
 }
 
 type config struct {
-	addr string
-	env  string
-	db   dbConfig
+	addr   string
+	env    string
+	apiURL string
+	db     dbConfig
 }
 
 type dbConfig struct {
@@ -45,6 +50,9 @@ func (app *application) mount() http.Handler {
 		r.Route("/v1", func(r chi.Router) {
 			r.Get("/health", app.healthCheckHandler)
 
+			docsURL := fmt.Sprintf("%s/swagger/doc.json", app.config.addr)
+			r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL(docsURL)))
+
 			r.Route("/monitors", func(r chi.Router) {
 				r.Post("/", app.createMonitorHandler)
 				r.Get("/", app.listMonitorsHandler)
@@ -63,6 +71,11 @@ func (app *application) mount() http.Handler {
 }
 
 func (app *application) run(mux http.Handler) error {
+	// Docs
+	docs.SwaggerInfo.Version = version
+	docs.SwaggerInfo.Host = app.config.apiURL
+	docs.SwaggerInfo.BasePath = apiBase
+
 	srv := &http.Server{
 		Addr:         app.config.addr,
 		Handler:      mux,

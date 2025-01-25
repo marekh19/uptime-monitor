@@ -1,0 +1,267 @@
+basePath: /v1
+definitions:
+  main.CreateMonitorPayload:
+    properties:
+      address:
+        type: string
+      config:
+        type: string
+      interval:
+        type: integer
+      kind:
+        type: string
+      method:
+        enum:
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - HEAD
+        - OPTIONS
+        type: string
+      name:
+        maxLength: 100
+        type: string
+    required:
+    - address
+    - interval
+    - name
+    type: object
+  main.HealthCheckPayload:
+    properties:
+      env:
+        type: string
+      status:
+        type: string
+      version:
+        type: string
+    type: object
+  main.UpdateMonitorPayload:
+    properties:
+      address:
+        type: string
+      config:
+        type: string
+      interval:
+        type: integer
+      kind:
+        type: string
+      method:
+        enum:
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - HEAD
+        - OPTIONS
+        type: string
+      name:
+        maxLength: 100
+        type: string
+    type: object
+  store.Monitor:
+    properties:
+      address:
+        type: string
+      config:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      interval:
+        type: integer
+      kind:
+        type: string
+      method:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+      version:
+        type: integer
+    type: object
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: API for Uptime Ume, monitoring uptime of services
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Uptime Ume API
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Check the health status of the API
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.HealthCheckPayload'
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Check the health status
+      tags:
+      - health
+  /monitors:
+    get:
+      consumes:
+      - application/json
+      description: Get All Monitors List
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/store.Monitor'
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - Bearer: []
+      summary: List All Monitors
+      tags:
+      - monitors
+    post:
+      consumes:
+      - application/json
+      description: Create a new monitor resource
+      parameters:
+      - description: CreateMonitorPayload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.CreateMonitorPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/store.Monitor'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - Bearer: []
+      summary: Create Monitor
+      tags:
+      - monitors
+  /monitors/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Monitor Resource by ID
+      parameters:
+      - description: Monitor ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - Bearer: []
+      summary: Delete Monitor
+      tags:
+      - monitors
+    get:
+      consumes:
+      - application/json
+      description: Get Monitor by ID
+      parameters:
+      - description: Monitor ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/store.Monitor'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - Bearer: []
+      summary: Get Monitor
+      tags:
+      - monitors
+    patch:
+      consumes:
+      - application/json
+      description: Update a monitor resource
+      parameters:
+      - description: UpdateMonitorPayload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.UpdateMonitorPayload'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - Bearer: []
+      summary: Update Monitor
+      tags:
+      - monitors
+securityDefinitions:
+  Bearer:
+    description: Provide your API key to access the endpoints
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

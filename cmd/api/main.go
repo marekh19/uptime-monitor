@@ -8,13 +8,33 @@ import (
 	"github.com/marekh19/uptime-monitor/internal/store"
 )
 
-const version = "0.0.1"
+const (
+	version = "0.0.1"
+	apiBase = "/api/v1"
+)
 
+//	@title			Uptime Ume API
+//	@description	API for Uptime Ume, monitoring uptime of services
+
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @BasePath					/v1
+//
+// @securityDefinitions.apikey	Bearer
+// @in							header
+// @name						Authorization
+// @description				Provide your API key to access the endpoints
 func main() {
 	env.Load()
 
 	cfg := config{
-		addr: env.GetString("ADDR", ":8080"),
+		addr:   env.GetString("ADDR", ":8080"),
+		apiURL: env.GetString("EXTERNAL_URL", "localhost:8080"),
 		db: dbConfig{
 			addr:         env.GetString("DB_URL", "file:database.db"),
 			maxOpenConns: env.GetInt("DB_MAX_OPEN_CONNS", 10),

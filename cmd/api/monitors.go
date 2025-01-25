@@ -23,6 +23,19 @@ type CreateMonitorPayload struct {
 	Interval int    `json:"interval" validate:"required,gt=0"`
 }
 
+// CreateMonitor godoc
+//
+//	@Summary		Create Monitor
+//	@Description	Create a new monitor resource
+//	@Tags			monitors
+//	@Accept			json
+//	@Produce		json
+//	@Param			payload	body		main.CreateMonitorPayload	true	"CreateMonitorPayload"
+//	@Success		201		{object}	store.Monitor
+//	@Failure		400		{object}	error
+//	@Failure		500		{object}	error
+//	@Security		Bearer
+//	@Router			/monitors [post]
 func (app *application) createMonitorHandler(w http.ResponseWriter, r *http.Request) {
 	var payload CreateMonitorPayload
 	if err := readJSON(w, r, &payload); err != nil {
@@ -41,7 +54,7 @@ func (app *application) createMonitorHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	// @TODO: Change this once auth is implemented
+	//	@TODO:	Change this once auth is implemented
 	userId := "1"
 
 	monitor := &store.Monitor{
@@ -68,6 +81,20 @@ func (app *application) createMonitorHandler(w http.ResponseWriter, r *http.Requ
 	}
 }
 
+// GetMonitorById godoc
+//
+//	@Summary		Get Monitor
+//	@Description	Get Monitor by ID
+//	@Tags			monitors
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"Monitor ID"
+//	@Success		200	{object}	store.Monitor
+//	@Failure		400	{object}	error
+//	@Failure		404	{object}	error
+//	@Failure		500	{object}	error
+//	@Security		Bearer
+//	@Router			/monitors/{id} [get]
 func (app *application) getMonitorHandler(w http.ResponseWriter, r *http.Request) {
 	monitor := getMonitorFromContext(r)
 
@@ -77,6 +104,17 @@ func (app *application) getMonitorHandler(w http.ResponseWriter, r *http.Request
 	}
 }
 
+// ListAllMonitors godoc
+//
+//	@Summary		List All Monitors
+//	@Description	Get All Monitors List
+//	@Tags			monitors
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	store.Monitor
+//	@Failure		500	{object}	error
+//	@Security		Bearer
+//	@Router			/monitors [get]
 func (app *application) listMonitorsHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -90,6 +128,20 @@ func (app *application) listMonitorsHandler(w http.ResponseWriter, r *http.Reque
 	}
 }
 
+// DeleteMonitor godoc
+//
+//	@Summary		Delete Monitor
+//	@Description	Delete Monitor Resource by ID
+//	@Tags			monitors
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	string	true	"Monitor ID"
+//	@Success		204
+//	@Failure		400	{object}	error
+//	@Failure		404	{object}	error
+//	@Failure		500	{object}	error
+//	@Security		Bearer
+//	@Router			/monitors/{id} [delete]
 func (app *application) deleteMonitorHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if id == "" {
@@ -121,6 +173,21 @@ type UpdateMonitorPayload struct {
 	Interval *int    `json:"interval" validate:"omitempty,gt=0"`
 }
 
+// UpdateMonitor godoc
+//
+//	@Summary		Update Monitor
+//	@Description	Update a monitor resource
+//	@Tags			monitors
+//	@Accept			json
+//	@Produce		json
+//	@Param			payload	body	main.UpdateMonitorPayload	true	"UpdateMonitorPayload"
+//	@Success		204
+//	@Failure		400	{object}	error
+//	@Failure		404	{object}	error
+//	@Failure		409	{object}	error
+//	@Failure		500	{object}	error
+//	@Security		Bearer
+//	@Router			/monitors/{id} [patch]
 func (app *application) updateMonitorHandler(w http.ResponseWriter, r *http.Request) {
 	monitor := getMonitorFromContext(r)
 
