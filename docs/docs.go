@@ -33,7 +33,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "health"
+                    "ops"
                 ],
                 "summary": "Check the health status",
                 "responses": {

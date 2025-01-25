@@ -14,7 +14,7 @@ type HealthCheckPayload struct {
 //
 //	@Summary		Check the health status
 //	@Description	Check the health status of the API
-//	@Tags			health
+//	@Tags			ops
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	main.HealthCheckPayload

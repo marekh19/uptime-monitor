@@ -114,7 +114,7 @@ paths:
           schema: {}
       summary: Check the health status
       tags:
-      - health
+      - ops
   /monitors:
     get:
       consumes:
