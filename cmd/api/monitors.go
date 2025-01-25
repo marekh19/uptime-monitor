@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/marekh19/uptime-monitor/internal/store"
+	"github.com/marekh19/uptime-ume/internal/store"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 

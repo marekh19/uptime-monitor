@@ -1,4 +1,4 @@
-module github.com/marekh19/uptime-monitor
+module github.com/marekh19/uptime-ume
 
 go 1.23.4
 
@@ -25,7 +25,7 @@ require (
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/matoous/go-nanoid/v2 v2.1.0
 	github.com/swaggo/http-swagger/v2 v2.0.2
-	github.com/swaggo/swag v1.16.4 // indirect
+	github.com/swaggo/swag v1.16.4
 	golang.org/x/crypto v0.32.0 // indirect
 	golang.org/x/exp v0.0.0-20230515195305-f3d0a9c9a5cc // indirect
 	golang.org/x/net v0.34.0 // indirect

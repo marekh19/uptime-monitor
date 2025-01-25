@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/marekh19/uptime-monitor/internal/db"
-	"github.com/marekh19/uptime-monitor/internal/env"
-	"github.com/marekh19/uptime-monitor/internal/store"
+	"github.com/marekh19/uptime-ume/internal/db"
+	"github.com/marekh19/uptime-ume/internal/env"
+	"github.com/marekh19/uptime-ume/internal/store"
 )
 
 const (

@@ -9,8 +9,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	"github.com/marekh19/uptime-monitor/docs"
-	"github.com/marekh19/uptime-monitor/internal/store"
+	"github.com/marekh19/uptime-ume/docs"
+	"github.com/marekh19/uptime-ume/internal/store"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
