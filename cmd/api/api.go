@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"go.uber.org/zap"
 
 	"github.com/marekh19/uptime-ume/docs"
 	"github.com/marekh19/uptime-ume/internal/store"
@@ -16,6 +16,7 @@ import (
 
 type application struct {
 	store  store.Storage
+	logger *zap.SugaredLogger
 	config config
 }
 
@@ -84,7 +85,7 @@ func (app *application) run(mux http.Handler) error {
 		IdleTimeout:  time.Minute,
 	}
 
-	log.Printf("Server has started at %s", app.config.addr)
+	app.logger.Infow("Server has started", "addr", app.config.addr, "env", app.config.env)
 
 	return srv.ListenAndServe()
 }

@@ -1,11 +1,10 @@
 package main
 
 import (
-	"log"
-
 	"github.com/marekh19/uptime-ume/internal/db"
 	"github.com/marekh19/uptime-ume/internal/env"
 	"github.com/marekh19/uptime-ume/internal/store"
+	"go.uber.org/zap"
 )
 
 const (
@@ -44,6 +43,11 @@ func main() {
 		env: env.GetString("ENV", "development"),
 	}
 
+	// Logger
+	logger := zap.Must(zap.NewProduction()).Sugar()
+	defer logger.Sync()
+
+	// Database connection
 	db, err := db.New(
 		cfg.db.addr,
 		cfg.db.maxOpenConns,
@@ -51,20 +55,21 @@ func main() {
 		cfg.db.maxIdleTime,
 	)
 	if err != nil {
-		log.Panic(err)
+		logger.Panic(err.Error())
 	}
 
 	defer db.Close()
-	log.Println("Database connection established")
+	logger.Info("Database connection established")
 
 	store := store.NewStorage(db)
 
 	app := &application{
 		config: cfg,
 		store:  store,
+		logger: logger,
 	}
 
 	mux := app.mount()
 
-	log.Fatal(app.run(mux))
+	logger.Fatal(app.run(mux))
 }

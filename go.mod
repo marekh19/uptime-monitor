@@ -4,7 +4,11 @@ go 1.23.4
 
 require github.com/tursodatabase/go-libsql v0.0.0-20241221181756-6121e81fbf92
 
-require github.com/swaggo/files/v2 v2.0.0 // indirect
+require (
+	github.com/swaggo/files/v2 v2.0.0 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
+	go.uber.org/zap v1.27.0 // indirect
+)
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
