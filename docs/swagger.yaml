@@ -37,6 +37,20 @@ definitions:
       version:
         type: string
     type: object
+  main.RegisterUserPayload:
+    properties:
+      password:
+        maxLength: 40
+        minLength: 8
+        type: string
+      username:
+        maxLength: 40
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
   main.UpdateMonitorPayload:
     properties:
       address:
@@ -86,6 +100,17 @@ definitions:
       version:
         type: integer
     type: object
+  store.User:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
 info:
   contact:
     email: support@swagger.io
@@ -97,6 +122,34 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: Uptime Ume API
 paths:
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Registers a user
+      parameters:
+      - description: User credentials
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/main.RegisterUserPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User registered
+          schema:
+            $ref: '#/definitions/store.User'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Registers a user
+      tags:
+      - authentication
   /health:
     get:
       consumes:

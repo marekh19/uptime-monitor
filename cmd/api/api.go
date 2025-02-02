@@ -54,6 +54,7 @@ func (app *application) mount() http.Handler {
 			docsURL := fmt.Sprintf("%s/swagger/doc.json", app.config.addr)
 			r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL(docsURL)))
 
+			// Protected routes
 			r.Route("/monitors", func(r chi.Router) {
 				r.Post("/", app.createMonitorHandler)
 				r.Get("/", app.listMonitorsHandler)
@@ -64,6 +65,11 @@ func (app *application) mount() http.Handler {
 					r.Delete("/", app.deleteMonitorHandler)
 					r.Patch("/", app.updateMonitorHandler)
 				})
+			})
+
+			// Public routes
+			r.Route("/auth", func(r chi.Router) {
+				r.Post("/register", app.registerUserHandler)
 			})
 		})
 	})
